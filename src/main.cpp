@@ -3,9 +3,9 @@
 #include <deque>
 #include "C:\raylib\raylib\src\raymath.h"
 using namespace std;
-Color green={173,204,96,255};
+Color blue={173, 216, 230, 255};
 Color darkGreen={43,51,24,255};
-
+int highScore=0,currScore=0;
 double lastUpdateTime=0;
 
 bool eventTriggered(double interval){
@@ -32,7 +32,7 @@ int offset=75;
 
 class Snake{
     public:
-    deque<Vector2>body = {Vector2{6,9},Vector2{5,9},Vector2{4,9}};
+    deque<Vector2>body = {Vector2{3,2},Vector2{2,2},Vector2{1,2}};
     Vector2 direction={1,0};
     bool addSegment=false;
     void Draw(){
@@ -56,7 +56,7 @@ class Snake{
         }
     }
     void Reset(){
-        body={Vector2{6,9},Vector2{5,9},Vector2{4,9}};
+        body={Vector2{3,2},Vector2{2,2},Vector2{1,2}};
         direction={1,0};
     }
 };
@@ -129,6 +129,8 @@ class Game{
             food.position=food.GenerateRandomPos(snake.body);
             snake.addSegment=true;
             score++;
+            currScore=score;
+            highScore=max(highScore,score);
             PlaySound(eatSound);
         }
     }
@@ -165,6 +167,12 @@ int main(){
     while (!WindowShouldClose())
     {
         BeginDrawing();
+        if(!game.running){
+            DrawText("Game Over",200,325,100,darkGreen);
+            DrawText(TextFormat("Score: %i",currScore),200,450,30,darkGreen);
+            DrawText(TextFormat("High Score: %i",highScore),200,425,30,darkGreen);
+        }
+        // move snake
         if(eventTriggered(0.2)){
             game.Update();
         }
@@ -184,11 +192,11 @@ int main(){
             game.snake.direction={1,0};
             game.running=true;
         }
-        ClearBackground(green);
+        ClearBackground(blue);
         DrawRectangleLinesEx(Rectangle{(float)offset-5,(float)offset-5,(float)(cellSize*cellCount+10),(float)(cellSize*cellCount+10)},5,darkGreen);
         // text ,posX,posY,fontSize,color
         DrawText("Snake-Game",offset-5,20,40,darkGreen);
-        DrawText(TextFormat("%i",game.score),offset-5,offset+cellSize*cellCount+10,40,darkGreen);
+        DrawText(TextFormat("Score: %i",game.score),offset-5,offset+cellSize*cellCount+10,40,darkGreen);
         game.Draw();
         EndDrawing(); 
     }
